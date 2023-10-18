@@ -1,33 +1,22 @@
-#include "printf.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_integer.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: klopez <klopez@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/17 14:51:27 by klopez            #+#    #+#             */
+/*   Updated: 2023/10/18 19:40:01 by klopez           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static int	ft_countnb(int c)
-{
-	int	count;
-
-	count = 0;
-	if (c < 0)
-	{
-		count++;
-		c = c * -1;
-	}
-	while (c / 10 > 0)
-	{
-		c = c / 10;
-		count++;
-	}
-    count++;
-	return (count);
-}
-static void	ft_putchar(char c)
-{
-	write(1, &c, 1);
-}
+#include "ft_printf.h"
 
 int	ft_integer(int nb)
 {
-    int count;
+	int	count;
 
-    count = ft_countnb(nb);
+	count = ft_countnb(nb);
 	if (nb == -2147483648)
 	{
 		write(1, "-2147483648", 11);
@@ -40,11 +29,57 @@ int	ft_integer(int nb)
 	}
 	if (nb > 9)
 	{
-		ft_integer(nb / 10);
-		ft_integer(nb % 10);
+		ft_uinteger(nb / 10);
+		ft_uinteger(nb % 10);
 	}
 	else
 		ft_putchar(nb + '0');
-    return (count);
+	return (count);
 }
 
+int	ft_uinteger(unsigned int nb)
+{
+	int	count;
+
+	count = ft_countnbu(nb);
+	if (nb > 9)
+	{
+		ft_uinteger(nb / 10);
+		ft_uinteger(nb % 10);
+	}
+	else
+		ft_putchar(nb + '0');
+	return (count);
+}
+
+int	ft_nbrhexa(unsigned int nb, int format)
+{
+	int	count;
+
+	count = ft_countnbhex(nb);
+	if (nb >= 16)
+	{
+		ft_nbrhexa(nb / 16, format);
+		ft_nbrhexa(nb % 16, format);
+	}
+	else if (format == 0)
+		ft_putchar("0123456789abcdef"[nb]);
+	else
+		ft_putchar("0123456789ABCDEF"[nb]);
+	return (count);
+}
+
+int	ft_nbrptr(unsigned long nb)
+{
+	int	count;
+
+	count = ft_countnbhexl(nb);
+	if (nb >= 16)
+	{
+		ft_nbrptr(nb / 16);
+		ft_nbrptr(nb % 16);
+	}
+	else
+		ft_putchar("0123456789abcdef"[nb]);
+	return (count);
+}

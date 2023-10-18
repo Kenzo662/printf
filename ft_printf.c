@@ -1,40 +1,121 @@
-#include "printf.h"
-int    ft_int(const char *s, va_list args)
-{
-    int i;
-    int nb;
-    int count;
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: klopez <klopez@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/17 14:51:11 by klopez            #+#    #+#             */
+/*   Updated: 2023/10/18 19:53:35 by klopez           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-    i = 0;
-    nb = 0;
-    count = 0;
-    while (s[i] != '\0')
-    {
-        nb = 0;
-        if (s[i] == '%' && s[i + 1] == 'd')
-        {
-            i += 2;
-            nb += (int) va_arg (args, int);
-            count = ft_integer(nb);
-        }
-        write(1, &s[i], 1);
-        i++;
-        count++;
-    }
-    return (count);
+#include "ft_printf.h"
+
+int	ft_printf(const char *s, ...)
+{
+	va_list	args;
+	int		i;
+	int		count;
+
+	va_start(args, s);
+	i = 0;
+	count = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == '%' && s[i + 1] == '%')
+		{
+			write(1, "%", 1);
+			count += 1;
+		}
+		if (s[i] == '%')
+		{
+			count += ft_format(s[i + 1], args);
+			i += 2;
+		}
+		write(1, &s[i], 1);
+		i++;
+		count++;
+	}
+	return (count);
 }
 
-int ft_printf(const char *s, ...)
+int	ft_format(const char c, va_list args)
 {
-    va_list args;
-    va_start (args, s);
-    return (ft_int (s, args));
+	int	nb;
 
+	nb = 0;
+	if (c == 'd' || c == 'i')
+		nb = ft_integer(va_arg(args, int));
+	if (c == 's')
+		nb = ft_char(va_arg(args, char *));
+	if (c == 'c')
+		nb = ft_putchar(va_arg(args, int));
+	if (c == 'u')
+		nb = ft_uinteger(va_arg(args, unsigned int));
+	if (c == 'x')
+		nb = ft_nbrhexa(va_arg(args, int), 0);
+	if (c == 'X')
+		nb = ft_nbrhexa(va_arg(args, int), 1);
+	if (c == 'p')
+		nb = ft_format2(c, args);
+	return (nb);
 }
 
-
-int main (void)
+int	ft_format2(const char c, va_list args)
 {
-    ft_printf("Le resultat est : %d\n%d\n", 25, 52);
-    printf("Le resultat est : %d\n%d\n", 25, 52);
+	int				nb;
+	unsigned long	temp;
+
+	nb = 0;
+	temp = 0;
+	if (c == 'p')
+	{
+		temp = (va_arg(args, unsigned long));
+		if (!temp)
+		{
+			write(1, "(nil)", 5);
+			nb += 5;
+		}
+		else
+		{
+			write(1, "0x", 2);
+			nb += ft_nbrptr(temp) + 2;
+		}
+	}
+	return (nb);
+}
+
+int	ft_putchar(char c)
+{
+	write(1, &c, 1);
+	return (1);
+}
+
+int	ft_char(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+	{
+		write(1, "(null)", 6);
+		i += 6;
+		return (i);
+	}
+	while (str[i])
+	{
+		ft_putchar(str[i]);
+		i++;
+	}
+	return (i);
+}
+
+int	main(void)
+{
+	char *str;
+	int i = ft_printf("Le resultat est : %c ou alors %d ou alors %%\n", '0', 965);
+ 	int j = printf("Le resultat est : %c ou alors %d ou alors %%\n", '0', 965);
+ 	ft_printf("%d\n", i);
+	printf("%d\n", j);
 }
