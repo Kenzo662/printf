@@ -6,7 +6,7 @@
 /*   By: klopez <klopez@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 14:51:11 by klopez            #+#    #+#             */
-/*   Updated: 2023/10/18 19:53:35 by klopez           ###   ########.fr       */
+/*   Updated: 2023/10/23 14:38:06 by klopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,17 @@ int	ft_printf(const char *s, ...)
 	count = 0;
 	while (s[i] != '\0')
 	{
-		if (s[i] == '%' && s[i + 1] == '%')
-		{
-			write(1, "%", 1);
-			count += 1;
-		}
 		if (s[i] == '%')
 		{
 			count += ft_format(s[i + 1], args);
 			i += 2;
 		}
-		write(1, &s[i], 1);
-		i++;
-		count++;
+		else
+		{
+			write(1, &s[i], 1);
+			i++;
+			count++;
+		}
 	}
 	return (count);
 }
@@ -59,6 +57,8 @@ int	ft_format(const char c, va_list args)
 		nb = ft_nbrhexa(va_arg(args, int), 1);
 	if (c == 'p')
 		nb = ft_format2(c, args);
+	if (c == '%')
+		nb = ft_putchar('%');
 	return (nb);
 }
 
@@ -109,13 +109,4 @@ int	ft_char(char *str)
 		i++;
 	}
 	return (i);
-}
-
-int	main(void)
-{
-	char *str;
-	int i = ft_printf("Le resultat est : %c ou alors %d ou alors %%\n", '0', 965);
- 	int j = printf("Le resultat est : %c ou alors %d ou alors %%\n", '0', 965);
- 	ft_printf("%d\n", i);
-	printf("%d\n", j);
 }

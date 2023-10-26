@@ -15,10 +15,10 @@ all : $(NAME)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME) : $(OBJ)
-	ar rcs $(NAME) $(OBJDIR)$(OBJ)
+	ar rcs $(NAME) $(OBJ)
 
 clean :
-	rm -rf $(OBJDIR)$(OBJ)
+	rm -rf $(OBJ)
 
 fclean : clean
 	rm -rf $(NAME)
